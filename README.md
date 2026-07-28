@@ -45,5 +45,10 @@ git remote set-url origin git@github.com:OWNER/REPO.git
 
 Notes:
 
+• ssh test: ssh -T -o BatchMode=yes git@github.com (authenticated)
+• switched remote: git remote set-url origin git@github.com:RajaFPC/git-journey.git
+• pushed main: git push -u origin main (push succeeded)
+
+
 • Use the git@github.com:owner/repo.git URL every time to avoid credential prompts.
 • If ever prompted, run ssh-add ~/.ssh/id_ed25519 (or ensure your ~/.ssh/config + keychain is set as done).
