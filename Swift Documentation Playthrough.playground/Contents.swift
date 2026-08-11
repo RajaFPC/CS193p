@@ -204,9 +204,13 @@ numbers.map({ (number: Int) -> Int in
         }
     })
 
-class Shape {
+class namedShape {
     var numberOfSides: Int = 0
-    let material = "solid"
+    var name: String
+    
+    init(name: String) {
+        self.name = name
+    }
     
     func IncreaseSides(by number: Int) -> Int{
         numberOfSides += number
@@ -217,13 +221,268 @@ class Shape {
     }
 }
 
-var shape = Shape()
+var shape = namedShape(name: "Troy" )
 shape.IncreaseSides(by: 3)
 print(shape.simpleDescription())
 
-
-class Na  medshape {
-    var numberOfSides: Int = 0
-    var name: String
+class Circle: namedShape {
+    var radius: Double
+    
+    init(radius: Double, name: String) {
+        self.radius = radius
+        super.init(name: name)
+    }
+    
+    func area() -> Double {
+        return Double.pi * radius * radius
+    }
+    override func simpleDescription() -> String {
+        return "A circle with radius: \(radius)"
+    }
     
 }
+let testCircle = Circle(radius: 3.0, name: "Hole")
+print(testCircle.area())
+print(testCircle.simpleDescription())
+
+class EquilateralTriangle : namedShape {
+    var sideLength: Double
+    
+    init(sideLength: Double, name: String) {
+        self.sideLength = sideLength
+        super.init(name: name)
+    }
+    
+    var perimeter: Double {
+        get {
+          return 3.0 * sideLength
+        }
+        set {
+            sideLength = newValue / 3.0
+        }
+        
+    }
+    
+    override func simpleDescription() -> String {
+        return "An equilateral triangle with sides of length \(sideLength)."
+    }
+}
+var triangle = EquilateralTriangle(sideLength: 3.777, name: "a triangle")
+print(triangle.perimeter)
+triangle.perimeter = 144
+print(triangle.sideLength)
+
+enum ServerResponse {
+    case result(String, String)
+    case runTime(String)
+    case failure(String)
+}
+
+
+let success = ServerResponse.result("6:00 am", "8:09 pm")
+let failure = ServerResponse.failure("Out of cheese.")
+let runTime = ServerResponse.runTime("8:09 pm")
+
+switch success {
+case let .runTime(timeStamp):
+    print("404 error occured at \(timeStamp).")
+case let .result(sunrise, sunset):
+    print("Sunrise is at \(sunrise) and sunset is at \(sunset).")
+case let .failure(message):
+    print("Failure...  \(message)")
+    
+}
+
+/*
+Pseudo code:
+ let response = ... // dynamically created from server data
+
+ switch response {
+ case let .runTime(timeStamp):
+     print("404 error occured at \(timeStamp).")
+ case let .result(sunrise, sunset):
+     print("Sunrise is at \(sunrise) and sunset is at \(sunset).")
+ case let .failure(message):
+     print("Failure...  \(message)")
+ }
+ 
+ IRL example:
+struct ServerResult: Decodable {
+     let type: String
+     let sunrise: String?
+     let sunset: String?
+     let message: String?
+ }
+
+ func makeServerResponse(from data: Data) -> ServerResponse? {
+     let decoder = JSONDecoder()
+     if let result = try? decoder.decode(ServerResult.self, from: data) {
+         switch result.type {
+         case "result":
+             return .result(result.sunrise ?? "", result.sunset ?? "")
+         case "failure":
+             return .failure(result.message ?? "")
+         case "runTime":
+             return .runTime(result.message ?? "")
+         default:
+             return nil
+         }
+     }
+     return nil
+ }
+ */
+
+
+enum Rank: Int, CaseIterable {
+    case ace = 1
+    case two, three, four, five, six, seven, eight, nine, ten
+    case jack, queen, king
+
+
+    func simpleDescription() -> String {
+        switch self {
+        case .ace:
+            return "ace"
+        case .jack:
+            return "jack"
+        case .queen:
+            return "queen"
+        case .king:
+            return "king"
+        default:
+            return String(self.rawValue)
+        }
+    }
+//    init?(rawValue: Int) {
+//        if rawValue > 1 && rawValue < 14 {
+//            Rank(rawValue: rawValue.self)
+//        } else {
+//            return nil
+//        }
+//    }
+}
+if let convertedRank = Rank(rawValue: 12) {
+    let Description = convertedRank.simpleDescription()
+    print(Description)
+}
+
+let ace = Rank.ace
+let aceRawValue = ace.rawValue
+print(aceRawValue)
+
+let King = Rank.king
+print(King.rawValue)
+
+let numDisc = Rank.six.simpleDescription()
+print(numDisc)
+
+func RankComparison(_ first: Rank, _ second: Rank) -> () {
+    if first.rawValue < second.rawValue {
+        print("\(second) you peasent \(first)" )
+    } else if first.rawValue > second.rawValue {
+        print("\(first) you peasent \(second)")
+    } else{
+        print("""
+We are the same kind fam!!
+Welcome to the \(first)s' club
+""")
+        
+    }
+}
+RankComparison(.five, .ten)
+
+RankComparison(.king, .king)
+
+enum Suit: CaseIterable {
+    case spades, hearts, diamonds, clubs
+
+
+    func simpleDescription() -> String {
+        switch self {
+        case .spades:
+            return "spades"
+        case .hearts:
+            return "hearts"
+        case .diamonds:
+            return "diamonds"
+        case .clubs:
+            return "clubs"
+        }
+    }
+    
+    func color() -> String {
+        if self == .hearts || self == .diamonds {
+            return "red"
+        } else {
+            return "black"
+        }
+    }
+}
+let hearts = Suit.hearts
+let heartsDescription = hearts.simpleDescription()
+let colorOfHearts = hearts.color()
+
+print(heartsDescription,colorOfHearts)
+
+struct Card {
+    var rank: Rank
+    var suit: Suit
+    
+    func simpleDescription() -> String {
+        return "The \(rank.simpleDescription()) of \(suit.simpleDescription())"
+    }
+    
+}
+
+func genDeck() -> [Card] {
+    var deck: [Card] = []
+    for suit in Suit.allCases {
+        for rank in Rank.allCases{
+            deck.append(Card(rank: rank, suit: suit))
+        }
+    }
+    return deck
+}
+
+let threeOfSpades = Card(rank: .three, suit: .spades)
+let threeOfSpadesDescription = threeOfSpades.simpleDescription()
+
+// Generate a full deck of cards and print some details
+// let starterCard = Card(rank: .ace, suit: .spades)
+let deck = genDeck()
+print("Total cards in deck: \(deck.count)")
+print(deck.map { $0.simpleDescription() })
+
+func makeArray<Item>(repeating item: Item, numberOfTimes: Int) -> [Item] {
+    var result: [Item] = []
+    for _ in 0..<numberOfTimes {
+        result.append(item)
+
+    }
+    return result
+}
+print(makeArray(repeating: "Knock Knock - Who's there?", numberOfTimes: 4))
+
+// Reimplement the Swift standard library's optional type
+enum OptionalValue<Wrapped> {
+    case none
+    case some(Wrapped)
+}
+var possibleInteger: OptionalValue<Int> = .none
+possibleInteger = .some(100)
+
+func anyCommonElements<T: Sequence, U: Sequence>(_ lhs: T, _ rhs: U) -> [T.Element]
+    where T.Element: Equatable, T.Element == U.Element
+{
+    var commons: [T.Element] = []
+
+    for lhsItem in lhs {
+        for rhsItem in rhs {
+            if lhsItem == rhsItem {
+                commons.append(lhsItem)
+            }
+        }
+    }
+   return commons
+}
+print(anyCommonElements([1, 2, 3, 7,8,9], [3,2,3,5,77,8]))
